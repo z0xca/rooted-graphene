@@ -69,6 +69,8 @@ SKIP_OTA_SERVER_UPLOAD=${SKIP_OTA_SERVER_UPLOAD:-'false'}
 SKIP_MODULES=${SKIP_MODULES:-'false'}
 # Upload OTA to test folder on OTA server
 UPLOAD_TEST_OTA=${UPLOAD_TEST_OTA:-false}
+# Remove the faulty north_therm sensor from the vendor thermal model (modules/norththermrewire.py)
+NORTH_THERM_REWIRE=${NORTH_THERM_REWIRE:-'false'}
 
 OTA_CHANNEL=${OTA_CHANNEL:-stable-security-preview} # Alternative: 'stable' or 'alpha'
 NO_COLOR=${NO_COLOR:-''}
@@ -332,6 +334,8 @@ function patchOTAs() {
   if ! ls ".tmp/my-avbroot-setup" >/dev/null 2>&1; then
     git clone https://github.com/chenxiaolong/my-avbroot-setup .tmp/my-avbroot-setup
     (cd .tmp/my-avbroot-setup && git checkout ${PATCH_PY_COMMIT})
+    cp modules/norththermrewire.py .tmp/my-avbroot-setup/lib/modules/
+    git -C .tmp/my-avbroot-setup apply "$PWD/patches/my-avbroot-setup-norththermrewire.patch"
   fi
 
   base642key
@@ -346,6 +350,8 @@ function patchOTAs() {
 
       args+=("--output" "$targetFile")
       args+=("--input" ".tmp/$OTA_TARGET.zip")
+      args+=("--verify-public-key-avb" "trust/${DEVICE_ID}-avb_pkmd.bin")
+      args+=("--verify-cert-ota" "trust/grapheneos-ota.crt")
       args+=("--sign-key-avb" "$KEY_AVB")
       args+=("--sign-key-ota" "$KEY_OTA")
       args+=("--sign-cert-ota" "$CERT_OTA")
@@ -371,6 +377,9 @@ function patchOTAs() {
         args+=("--module-custota" ".tmp/custota.zip")
         args+=("--module-oemunlockonboot" ".tmp/oemunlockonboot.zip")
       fi
+      if [[ "${NORTH_THERM_REWIRE}" == 'true' ]]; then
+        args+=("--north-therm-rewire")
+      fi
       # We create csig and device JSON for OTA later if necessary
       args+=("--skip-custota-tool")
 
@@ -390,6 +399,8 @@ function patchOTAs() {
             .tmp/my-avbroot-setup/patch.py ${args[*]} && \
         chown -R $(id -u):$(id -g) .tmp"
 
+      # Output must be signed by our keys, pinned in trust/ independently of the secrets
+      .tmp/avbroot ota verify --input "$targetFile" --public-key-avb trust/signing-avb_pkmd.bin --cert-ota trust/signing-ota.crt
       printGreen "Finished patching file ${targetFile}"
     fi
     

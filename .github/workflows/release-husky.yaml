@@ -1,0 +1,17 @@
+name: Release husky
+
+on:
+  schedule:
+    - cron: '23 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write # create releases, upload assets, push the OTA server data to gh-pages
+
+jobs:
+  husky:
+    uses: ./.github/workflows/release-single.yaml
+    with:
+      device-id: husky
+      skip-rooted: true
+    secrets: inherit
