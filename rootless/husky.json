@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "full": {
+    "location_ota": "https://github.com/z0xca/rooted-graphene/releases/download/2026091901/husky-2026091901-8dcff4b-rootless.zip",
+    "location_csig": "https://github.com/z0xca/rooted-graphene/releases/download/2026091901/husky-2026091901-8dcff4b-rootless.zip.csig"
+  }
+}
