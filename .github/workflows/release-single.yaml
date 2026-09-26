@@ -133,7 +133,6 @@ jobs:
           KEY_AVB_BASE64: ${{ secrets.KEY_AVB_BASE64 || env.KEY_AVB_BASE64 }}
           KEY_OTA_BASE64: ${{ secrets.KEY_OTA_BASE64 || env.KEY_OTA_BASE64 }}
           CERT_OTA_BASE64: ${{ secrets.CERT_OTA_BASE64 || env.CERT_OTA_BASE64 }}
-          NORTH_THERM_REWIRE: ${{ vars.NORTH_THERM_REWIRE }}
         run: |
           if [[ $SKIP_RELEASE == 'true' ]]; then
             DEBUG=1 bash -c '. rooted-ota.sh && createRootedOta && createOtaServerData'

@@ -70,7 +70,7 @@ SKIP_MODULES=${SKIP_MODULES:-'false'}
 # Upload OTA to test folder on OTA server
 UPLOAD_TEST_OTA=${UPLOAD_TEST_OTA:-false}
 # Remove the faulty north_therm sensor from the vendor thermal model (modules/norththermrewire.py)
-NORTH_THERM_REWIRE=${NORTH_THERM_REWIRE:-'false'}
+NORTH_THERM_REWIRE=${NORTH_THERM_REWIRE:-'true'}
 
 OTA_CHANNEL=${OTA_CHANNEL:-stable-security-preview} # Alternative: 'stable' or 'alpha'
 NO_COLOR=${NO_COLOR:-''}
